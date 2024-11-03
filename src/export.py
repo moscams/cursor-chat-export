@@ -149,7 +149,7 @@ class MarkdownFileSaver(FileSaver):
             file_path (str): The path to the Markdown file where the data will be saved.
         """
         try:
-            with open(file_path, 'w') as file:
+            with open(file_path, 'w', encoding="utf-8") as file:
                 file.write(formatted_data)
             logger.info(f"Chat has been formatted and saved as {file_path}")
         except IOError as e:

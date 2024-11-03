@@ -218,5 +218,52 @@ def discover(
         logger.error(error_message)
         raise typer.Exit(code=1)
 
+@app.command()
+def export_all(
+    output_dir: str = typer.Option(os.path.join(os.getcwd(), "out"), help="The directory where the output markdown files will be saved."),
+    cursor_workspace_path: str = typer.Option(None, help="Path to the Cursor workspace directory. Usually does not need to be provided."),
+):
+    """Export all chats from every workspace database to markdown files."""
+    try:
+        workspace_path = Path(cursor_workspace_path) if cursor_workspace_path else get_cursor_workspace_path()
+        
+        db_paths = list(workspace_path.glob("*/state.vscdb"))
+        if not db_paths:
+            logger.warning(f"No state.vscdb files found in {workspace_path}")
+            return
+
+        output_base = Path(output_dir)
+        output_base.mkdir(exist_ok=True, parents=True)
+
+        success_count = 0
+        for db_path in db_paths:
+            workspace_id = db_path.parent.name
+            output_path = output_base / workspace_id
+            
+            try:
+                output_path.mkdir(exist_ok=True, parents=True)
+                logger.info(f"Exporting {db_path}...")
+                
+                export(
+                    db_path=str(db_path),
+                    output_dir=str(output_path),
+                    latest_tab=False,
+                    tab_ids=None
+                )
+                
+                success_count += 1
+                logger.success(f"Successfully exported {workspace_id}")
+                
+            except Exception as e:
+                logger.error(f"Failed to export {workspace_id}: {str(e)}")
+                continue
+
+        logger.info(f"Export completed: {success_count}/{len(db_paths)} workspaces processed successfully")
+
+    except Exception as e:
+        logger.error(f"Export all failed: {str(e)}")
+        raise typer.Exit(code=1)
+
+
 if __name__ == "__main__":
     app()

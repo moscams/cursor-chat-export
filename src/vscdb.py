@@ -33,6 +33,11 @@ class VSCDBQuery:
             rows = cursor.fetchall()
             conn.close()
 
+            if len(rows) == 0:
+                e = "No chat data found in database."
+                logger.error(e)
+                return {"error": str(e)}
+            
             # Assuming the query returns rows with a single column
             result = [row[0] for row in rows]
             logger.success(f"Query executed successfully, fetched {len(result)} rows.")

@@ -70,3 +70,21 @@ See `./chat.py export --help` for general help. Examples:
 # Export all chats of a specifc workspace
 ./chat.py export --output-dir "/path/to/output" "/path/to/workspaces/workspace-dir/state.vscdb"
 ```
+
+---
+
+### Export All Workspaces
+See `./chat.py export-all --help` for general help. Examples:
+```sh
+# Most common usage: Export all chats from all workspaces to current directory
+./chat.py export-all
+
+# Advanced options (usually not needed):
+# Export to a specific directory
+./chat.py export-all --output-dir "/path/to/output"
+
+# Export from a custom workspace path to a specific directory
+./chat.py export-all --cursor-workspace-path "/path/to/cursor/workspaces" --output-dir "/path/to/output"
+```
+
+Each workspace's chats will be exported to a separate subdirectory named after the workspace ID.
